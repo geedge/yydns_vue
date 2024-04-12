@@ -1,0 +1,113 @@
+const getTargetsResponse = {
+  "code": 200,
+  "message": "success",
+  "result": [
+    {
+      "setting_id": 1,
+      "traffic_collect_task_id": null,
+      "id": 1,
+      "ip": "171.25.193.64",
+      "pod_name": "target-1-da-1-6cddf4649d-mfpx7",
+      "nick_name": "daoranjcqlil",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:32",
+      "complete_time": "2023-12-29T19:00:17",
+      "role": "da",
+      "country": "sweden",
+      "cidr": "171.25.193.0/24"
+    },
+    {
+      "setting_id": 2,
+      "traffic_collect_task_id": null,
+      "id": 2,
+      "ip": "193.31.27.64",
+      "pod_name": "target-1-relay-2-8df66cb66-slhnv",
+      "nick_name": "relayjknwkekrof",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:34",
+      "complete_time": "2023-12-29T19:05:01",
+      "role": "relay",
+      "country": "germany",
+      "cidr": "193.31.27.0/24"
+    },
+    {
+      "setting_id": 3,
+      "traffic_collect_task_id": null,
+      "id": 3,
+      "ip": "80.228.207.64",
+      "pod_name": "target-1-relay-3-6f57bf5448-snwgk",
+      "nick_name": "relayuyunnharjw",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:36",
+      "complete_time": "2023-12-29T19:05:00",
+      "role": "relay",
+      "country": "germany",
+      "cidr": "80.228.207.0/24"
+    },
+    {
+      "setting_id": 4,
+      "traffic_collect_task_id": null,
+      "id": 4,
+      "ip": "116.202.169.64",
+      "pod_name": "target-1-relay-4-557dcdfbd7-4lx5p",
+      "nick_name": "relayslwwaewlzs",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:38",
+      "complete_time": "2023-12-29T19:04:00",
+      "role": "relay",
+      "country": "germany",
+      "cidr": "116.202.169.0/24"
+    },
+    {
+      "setting_id": 6,
+      "traffic_collect_task_id": null,
+      "id": 6,
+      "ip": "84.19.188.64",
+      "pod_name": "target-1-relay-6-8559fc5858-j2v5m",
+      "nick_name": "relayzvrsfipwmd",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:46",
+      "complete_time": "2023-12-29T19:08:06",
+      "role": "relay",
+      "country": "germany",
+      "cidr": "84.19.188.0/24"
+    },
+    {
+      "setting_id": 7,
+      "traffic_collect_task_id": null,
+      "id": 7,
+      "ip": "45.138.16.0",
+      "pod_name": "target-1-exit-7-78984bf859-2hmnc",
+      "nick_name": "exitpzidrsshzi",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:48",
+      "complete_time": "2023-12-29T19:07:12",
+      "role": "exit",
+      "country": "netherlands",
+      "cidr": "45.138.16.0/24"
+    },
+    {
+      "setting_id": 8,
+      "traffic_collect_task_id": null,
+      "id": 8,
+      "ip": "77.91.68.64",
+      "pod_name": "target-1-exit-8-865cf99948-gw7br",
+      "nick_name": "exitgqnnvqsoux",
+      "status": "complete",
+      "onion": null,
+      "create_time": "2023-12-29T18:50:49",
+      "complete_time": "2023-12-29T19:04:56",
+      "role": "exit",
+      "country": "russia",
+      "cidr": "77.91.68.0/24"
+    }
+  ]
+}
+
+export { getTargetsResponse }

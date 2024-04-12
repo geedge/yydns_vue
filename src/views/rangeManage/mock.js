@@ -1,0 +1,90 @@
+const getTargetsResponse = {
+    "code":200,
+    "message":"success",
+    "result":{
+        "items":[
+            {
+                "target_name":"tor测试靶场",
+                "description":"部署tor网络",
+                "attribute":"public",
+                "id":23,
+                "user_id":2,
+                "create_time":"2023-12-07T14:24:53",
+                "target_deploy_statuses":[
+                    {
+                        "deploy_status":"部署成功",
+                        "deploy_total_count":20,
+                        "deploy_success_count":18,
+                        "deploy_default_count":2
+                    }
+                ]
+            },
+            {
+                "target_name":"tor测试靶场2",
+                "description":"部署tor网络",
+                "attribute":"public",
+                "id":24,
+                "user_id":2,
+                "create_time":"2023-12-07T14:37:54",
+                "target_deploy_statuses":[
+                    {
+                        "deploy_status":"未部署",
+                        "deploy_total_count":0,
+                        "deploy_success_count":0,
+                        "deploy_default_count":0
+                    }
+                ]
+            },
+            {
+                "target_name":"string",
+                "description":"string",
+                "attribute":"public",
+                "id":34,
+                "user_id":4,
+                "create_time":"2023-12-13T00:30:22",
+                "target_deploy_statuses":[
+
+                ]
+            },
+            {
+                "target_name":"XT-RANGE1",
+                "description":"XT测试靶场1",
+                "attribute":"public",
+                "id":35,
+                "user_id":4,
+                "create_time":"2023-12-13T10:57:05",
+                "target_deploy_statuses":[
+
+                ]
+            },
+            {
+                "target_name":"XT-RANGE2",
+                "description":"XT测试靶场2",
+                "attribute":"public",
+                "id":36,
+                "user_id":4,
+                "create_time":"2023-12-13T15:55:12",
+                "target_deploy_statuses":[
+
+                ]
+            },
+            {
+                "target_name":"XT-RANGE3",
+                "description":"XT测试靶场3",
+                "attribute":"public",
+                "id":37,
+                "user_id":4,
+                "create_time":"2023-12-13T15:55:12",
+                "target_deploy_statuses":[
+
+                ]
+            }
+        ],
+        "total":6,
+        "page":1,
+        "size":50,
+        "pages":1
+    }
+}
+
+export { getTargetsResponse }

@@ -1,0 +1,353 @@
+@charset "utf-8";
+*{
+	margin:0;
+	padding:0
+}
+html{
+	width:100%;
+	height:100%
+}
+body{
+	height:100%;
+	width:100%;
+	margin:0 auto;
+	font-family:"Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti, "Microsoft YaHei","SourceHanSansCN";
+	font-size:14px;
+}
+/*设置盒模型*/
+*,*:before,*:after{
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+	outline:none;
+	-webkit-tap-highlight-color:rgba(255,0,0,0)
+}
+
+
+a{ width:auto; height:auto;}
+a:link,a:visited,a:hover,a:active{text-decoration:none;color: black;}
+ul,li,dl,dt,dd,p,img{border:none}
+ul,li{list-style:none}
+mark{background-color: transparent;}
+i{font-style: normal;}
+img{ width:100%; vertical-align:middle;}
+.fl{float: left;}
+.mt10{margin-top: 20px;}
+.lineOne{overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
+.lineTwo{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden;}
+.lineThree{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;}
+.el-date-table td.disabled div{background-color: transparent;}
+.el-button.is-plain:focus, .el-button.is-plain:hover{background:#424CB6;border-color:#424CB6;color:#fff;}
+.el-picker-panel__link-btn{background:#424CB6;border-color:transparent;color:#fff;}
+.el-date-picker__time-header{border-color: #2773E6;}
+.el-date-table th{border-color:#2773E6;}
+.el-picker-panel__footer{background-color:transparent !important;border-color: #2773E6;}
+.el-select-dropdown{background-color: rgb(14, 29, 81);border: 1px solid rgb(39, 115, 230);}
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover{color:#2773E6;background-color: transparent;}
+.el-picker-panel__icon-btn{color:#2773E6;}
+.el-popper .popper__arrow::after{border-top-color: #2773E6 !important;border-bottom-color:#2773E6 !important}
+.popv{
+	background: radial-gradient(circle, #10215C 0%, #070F29 100%);color: #fff;border: 1px solid #2773E6;}
+/* table表格隔行变色 */
+/* .el-table .warning-row {
+    background: rgba(237, 239, 255, .3);
+}
+.el-table .success-row {
+    background: #FFFFFF;
+}
+.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+    margin-bottom: 22px;
+} */
+/* 改变el-table外边框 */
+/* .el-table--border:after,.el-table--group:after,.el-table:before {
+	background-color: #DEE2E6;
+}
+.el-table--border,.el-table--group {
+	border-color: #DEE2E6;
+}
+.el-table td,.el-table th.is-leaf {
+	border-bottom: 1px solid #DEE2E6;
+}
+.el-table--border th,.el-table--border th.gutter:last-of-type {
+	border-bottom: 1px solid #DEE2E6;
+}
+.el-table--border td,.el-table--border th {
+	border-right: 1px solid #DEE2E6;
+} */
+/* 改变el-table内边框 */
+/* .el-table--border td, .el-table--border th, .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed{
+	border-right: 1px solid #DEE2E6 !important;
+} */
+
+
+/* 
+这部分是修改table的样式
+*/
+/* table背景颜色 */
+.el-table {
+	/* background-color: transparent !important; */
+	background-color: rgba(25, 33, 61, 0.5) !important;
+	border-collapse: separate; /* 防止单元格合并时产生间距 */
+	border-radius: 6px; /* 添加圆角效果 */
+	border: 1px solid rgba(186, 208, 241, 0.10) !important;
+}
+.el-table--border::after, .el-table--group::after, .el-table::before {
+    background-color: transparent;
+}
+/* 更改表头行+数据行背景颜色 */
+.el-table th, .el-table tr {
+	background-color: transparent !important;
+}
+/* 更改表头背景颜色 */
+.el-table thead tr>th{
+	/* color: #f8fdff; */
+	color: rgba(255, 255, 255, 0.4);
+	border-bottom: 1px solid rgba(186, 208, 241, 0.10) !important;
+	/* background: rgba(25, 33, 61, 0.5) !important; */
+}
+/* 更改表格每行背景颜色 */
+.el-table tbody tr>td{
+	/* color: #f8fdff; */
+	color: rgba(255, 255, 255, 0.9);
+	border-bottom: 1px solid rgba(186, 208, 241, 0.10) !important;
+	/* background: rgba(25, 33, 61, 0.5) !important; */
+}
+/* 设置鼠标经过行时背景颜色 */
+.el-table tbody tr:hover>td{
+	background-color: #152666 !important;
+}
+/* 设置鼠标选中行时背景颜色 */
+.el-table tbody tr.current-row>td {
+	background: #152666 !important;
+  }
+/* table的表头padding距离 */
+.el-table th.el-table__cell>.cell {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+/* table每行padding距离 */
+.el-table .el-table__cell {
+	padding: 3px 0;
+}
+/* 改变el-table的header的bottom边框 */
+.el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf {
+    border-bottom: none;
+}
+
+/* 滚动条整体部分 */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 8px;
+	/* background-color: #19213D; */
+	background: transparent;
+  }
+/* 定义滑块 内阴影+圆角 */
+::-webkit-scrollbar-thumb {
+border-radius:2px;
+box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+background-color: rgb(216, 216, 216, 0.4);
+}
+/* 定义滚动条轨道 内阴影+圆角 */
+::-webkit-scrollbar-track{
+box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+border-radius: 3px;
+/* background: #19213D; */
+background: transparent;
+;
+}
+
+/* 
+这部分是修改分页组件的样式
+*/
+.el-pagination {
+	height: 8%;
+	margin-left: 2.5%;
+	float: right;
+	padding: 20px 110px 0 0;
+	transform: scale(1.3);
+	.el-pagination__total {
+		color: #C0C0C0;
+	}
+	.el-input__inner {
+		background-color: #688CAA !important;
+		border-color: #688CAA;
+		border-radius: 3px;
+		color: #F0F0F0;
+	}
+	.el-select {
+		.el-input__suffix::before {
+			content: "";
+			width: 0;
+			height: 0;
+			background: transparent;
+		}
+		.el-input .el-select__caret {
+			color: #F0F0F0;
+		}
+	}
+	.el-pagination__jump {
+		color: #C0C0C0;
+	}
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #02DDEA;
+    color: #202020;
+	font-weight: 400;
+}
+.el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
+	background: #688CAA;
+	color: #202020;
+	font-weight: 400;
+}
+
+/* 
+这部分是修改form表单的样式
+*/
+.el-form-item__label {
+    color: #FFFFFF !important;
+}
+.long-item-label .el-form-item__label {
+	line-height: 14px;
+	padding: 12px 12px 0 0;
+}
+.el-textarea__inner {
+	height: 80px; /* 设置输入框的高度 */
+	line-height: 25px; /* 设置输入框的行高，使文本垂直居中 */
+	display: inline-block;
+	background-color: rgba(14, 61, 138, 0.5) !important;
+	color: rgba(2, 221, 234, 0.5);
+	border-color: rgba(0, 213, 252, 0.5);
+	border-radius: 0;
+}
+.el-textarea__inner::placeholder {
+	color: rgba(2, 221, 234, 0.5); /* 设置占位符文本的颜色为红色 */
+	font-size: 15px;
+}
+/* 
+这部分是修改input框和select框的样式
+*/
+/* 改变el-input输入框placeholder颜色 */
+.el-input input::-webkit-input-placeholder {
+color: rgba(2, 221, 234, 0.5)
+}
+.el-input input::-moz-input-placeholder {
+	color: rgba(2, 221, 234, 0.5)
+}
+.el-input input::-ms-input-placeholder {
+	color: rgba(2, 221, 234, 0.5)
+}
+.el-input--small .el-input__inner{
+	height: 32px;
+	line-height: 32px;
+}
+.el-input__prefix, .el-input__suffix{
+	color: rgba(2, 221, 234, 0.5);
+}
+.el-date-picker{
+	width: 320px;background-color: #0E1D51;border-color: #2773E6;
+}
+.el-input__inner{
+	/* input背景颜色 */
+	background-color:rgba(14, 61, 138, 0.5) !important;
+	/* input边框颜色 */
+	border-color: rgba(0, 213, 252, 0.5);
+	border-radius: 0;
+	/* input字体颜色 */
+	color: rgba(2, 221, 234, 0.5);
+}
+/* select新增竖线 */
+.el-select {
+	.el-input__suffix::before {
+		content: "";
+		width: 1px;
+		height: 80%;
+		margin: 15% 5% 15% -20%;
+		position: absolute;
+		background: linear-gradient(180deg, rgba(2, 221, 234, 0) 0%, #02DDEA 48.96%, rgba(2, 221, 234, 0) 100%);
+	}
+	/*select的上下箭头图标样式*/
+	.el-input .el-select__caret {
+		color: #02DDEA;
+	}
+}
+/* select下拉框 背景色和边框色 */
+.el-select-dropdown {
+    border: 1px solid rgba(0, 213, 252, 0.50) !important;
+    background: #112D6F !important;
+    box-shadow: 0px 0px 7px 0px rgba(2, 221, 234, 0.20);
+	.el-scrollbar {
+		background-color: transparent !important;
+		.el-select-dropdown__item {
+			color: #FFFFFF;
+			opacity: 0.9;
+			font-size: 12px;
+    		padding: 0 15px;
+		}
+		.el-select-dropdown__item.hover, .el-select-dropdown__item.selected {
+			color: #409EFF;
+		}
+	}
+	.popper__arrow {
+		top: -7px !important;
+		border-bottom-color: transparent !important;
+	}
+}
+
+
+/* 
+这部分是修改button的样式
+*/
+/* button按钮：字体颜色+背景颜色+border颜色 */
+.el-button--text{
+	color: #02DDEA;
+	padding-left: 5px;
+    padding-right: 5px;
+	background-color: transparent;
+}
+.el-button--primary{
+	color: #02DDEA;
+	background-color: #0E3D8A;
+	border-color: #00D5FC;
+	border-radius: 0;
+}
+/* button按钮：hover和聚焦时样式 */
+.el-button--primary:hover,
+.el-button--primary:focus {
+
+}
+
+/*dialog中label样式*/ 
+.label-span {
+	margin-right: 3%;
+	display: inline-block;
+	width: 60px;
+	text-align: right;
+}
+
+/*遮罩层*/
+.mask{
+	position: fixed; /*将元素设置为固定定位*/
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(0,0,0,0.5); /*通过rgba函数来控制遮罩层的透明度*/
+	display: none; /*将元素隐藏*/
+}
+
+/*loading的样式*/
+.el-loading-mask {
+	background-color: rgba(0,0,0,0.2) !important; /*通过rgba函数来控制loading的透明度*/
+}
+
+/*Drawer抽屉的样式*/
+.el-drawer {
+	color: #FFFFFF;
+    width: 85% !important;
+	background: #0A162C !important;
+	.el-drawer__body {
+		overflow: hidden !important;
+	}
+}
+
