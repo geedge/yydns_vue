@@ -15,7 +15,7 @@
         <div  :class="hit==='menuMBGZ'? 'NotesHit':'Notes'" v-on:click="updataHit('menuMBGZ')">
             <div class="nameIframe">
                 <img src="../img/6.png">
-                <span>MBGZ</span>
+                <span>目标感知</span>
             </div>
         </div>
         <div  :class="hit==='menuTaskManagement'? 'NotesHit':'Notes'"  @click="updataHit('menuTaskManagement')">

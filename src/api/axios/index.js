@@ -16,6 +16,7 @@ if (process.env.NODE_ENV == 'development') {
 // 请求超时时间
 axios.defaults.timeout = 60000;
 axios.defaults.headers['Content-Type'] = 'application/json';
+// axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 // post请求头
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // axios.defaults.headers['Access-Control-Allow-Header']='Access-Control-Allow-Origin'
@@ -26,11 +27,13 @@ axios.defaults.headers['Content-Type'] = 'application/json';
 
 
 // // 请求拦截器
-axios.interceptors.request.use(    
+axios.interceptors.request.use(
+
     config => {
         // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
         // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
+        const token = "localStorage.getItem('token')";
         if(token!=''){
             config.headers['Authorization'] = 'Bearer ' + token
         }
@@ -42,10 +45,10 @@ axios.interceptors.request.use(
 //         if(userId!=''){
 //             config.headers.userId = userId;
 //         }
-        return config;    
-    },    
-    error => {     
-        return Promise.error(error);    
+        return config;
+    },
+    error => {
+        return Promise.error(error);
     })
 
 // 响应拦截器

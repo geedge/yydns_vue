@@ -1,33 +1,33 @@
 <template>
     <div class="box" v-loading="loading">
         <div class="card">
-            <div class="title">靶场数量</div>
+            <div class="title">已部署代理</div>
             <div>
-                <span class="info-span">{{ targetData.total_target_count }}</span>
-                <span class="unit-span">个</span>
+                <span class="info-span">{{ agent_num }}</span>
+                <span class="unit-span">台</span>
             </div>
         </div>
         <div class="card">
-            <div class="title">部署成功</div>
+            <div class="title">已执行任务</div>
             <div>
-                <span class="info-span">{{ targetData.deploy_success_count }}</span>
-                <span class="unit-span">个</span>
+                <span class="info-span">{{ task_num }}</span>
+                <span class="unit-span">次</span>
             </div>
         </div>
         <div class="card">
-            <div class="title">部署失败</div>
+            <div class="title">已运行时间</div>
             <div>
-                <span class="info-span">{{ targetData.deploy_fail_count }}</span>
-                <span class="unit-span">个</span>
+                <span class="info-span">{{ workday }}</span>
+                <span class="unit-span">天</span>
             </div>
         </div>
-        <div class="card">
-            <div class="title">未部署</div>
-            <div>
-                <span class="info-span">{{ targetData.no_deploy_count }}</span>
-                <span class="unit-span">个</span>
-            </div>           
-        </div>
+<!--        <div class="card">-->
+<!--            <div class="title">未部署</div>-->
+<!--            <div>-->
+<!--                <span class="info-span">{{ targetData.no_deploy_count }}</span>-->
+<!--                <span class="unit-span">个</span>-->
+<!--            </div>           -->
+<!--        </div>-->
     </div>
 </template>
 
@@ -39,23 +39,29 @@ export default {
     data() {
         return {
             loading: false,
-            targetData: {}
+            targetData: {},
+            //num
+            agent_num:0,
+            task_num:0,
+            workday:0,
         }
     },
     created() {
-        // this.init()
+        this.init()
     },
     mounted() {
-        this.init()
+        // this.init()
     },
     methods: {
         init () {
             // this.targetData = getTargetsResponse?.result
             
             this.loading = true
-            this.$axios.get(this.$http.api.getTargetStatistics).then(res => {
-                if (res.code == 200 || res.code == "OK") {
-                    this.targetData = res?.result
+            this.$axios.get(this.$http.api.sysNum).then(res => {
+                if (res.code == 200) {
+                    this.agent_num=res?.agent_num
+                    this.task_num=res?.task_num
+                    this.workday=res?.workday
                 }
             }).catch(err => {
                 console.log(err)
@@ -80,7 +86,7 @@ export default {
         .title {
             color: #FFF;
             font-family: PingFang HK;
-            font-size: 12px;
+            font-size: 18px;
             font-style: normal;
             font-weight: 400;
             line-height: normal;

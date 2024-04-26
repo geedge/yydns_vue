@@ -1,20 +1,28 @@
 <template>
     <div class="source-card">
-        <div class="source-chart" id="resource" v-loading="loading"></div>
-        <div class="tabs-container">
-            <el-tabs v-model="activeName" @tab-click="tabClick">
-                <el-tab-pane label="CPU" name="CPU"></el-tab-pane>
-                <el-tab-pane label="MEMEORY" name="MEMEORY"></el-tab-pane>
-            </el-tabs>
-        </div>
+<!--        <div class="source-chart" id="resource" v-loading="loading"></div>-->
+        <ZhuZhuangTu3  :active="0" ref="zhudouble"  :bing="zhudouble"></ZhuZhuangTu3>
+<!--        <div class="tabs-container">-->
+<!--            <el-tabs v-model="activeName" @tab-click="tabClick">-->
+<!--                <el-tab-pane label="CPU" name="CPU"></el-tab-pane>-->
+<!--                <el-tab-pane label="MEMEORY" name="MEMEORY"></el-tab-pane>-->
+<!--            </el-tabs>-->
+
+
+<!--        </div>-->
     </div>
 </template>
 
 <script>
 import * as echarts from 'echarts';
+import ZhuZhuangTu3 from '../echarts/zhuzhuangtu3'
+
 import { getTargetsResponse } from './sourceMock.js'
 export default {
     name: 'SourceView',
+    components: {
+        ZhuZhuangTu3,
+    },
     data() {
         return {
             loading: false,
@@ -25,14 +33,22 @@ export default {
             memoryList: [],
             activeName: 'CPU',
             sourceChart: null,
-            rangeDict: []
+            rangeDict: [],
+            zhudouble:{
+                xdata:[],
+                ydata1:[],  //ipv6
+                ydata2:[],  //dnsses
+                ydata3:[],  //dot
+                ydata4:[],  //doh
+                ydata5:[],  //总计
+            },
         }
     },
     created() {
     },
     mounted(){
         this.init()
-        this.getRangeDict()
+        // this.getRangeDict()
     },
     methods: {
         init() {
@@ -45,15 +61,26 @@ export default {
             // }
             // this.initEcharts()
             this.loading = true
-            this.$axios.get(this.$http.api.getSourceStatistics).then(res => {
-                if (res.code == 200 || res.code == "OK") {
-                    this.sourceData = res?.result || {}
-                    for (const key in this.sourceData) {
-                        this.sourceDataX.push(key)
-                        this.sourceDataY.push(this.sourceData[key]['total_cpu'])
-                        this.cpuList.push(this.sourceData[key]['total_cpu'])
-                        this.memoryList.push(this.sourceData[key]['total_memory'])
-                    }
+            this.$axios.get(this.$http.api.sysNumDate).then(res => {
+                if (res.code == 200) {
+                    this.zhudouble.ydata1=[];
+                    this.zhudouble.ydata2=[];
+                    this.zhudouble.ydata3=[];
+                    this.zhudouble.ydata4=[];
+                    this.zhudouble.ydata5=[];
+                    this.zhudouble.xdata=[];
+
+
+                    Object.keys(res.date_data).forEach(date => {
+                        console.log(`Date: ${date}, dot value: ${res.date_data[date].dot}`);
+                        this.zhudouble.xdata.push(date)
+                        this.zhudouble.ydata1.push(res.date_data[date].v6dns)
+                        this.zhudouble.ydata2.push(res.date_data[date].dnssec)
+                        this.zhudouble.ydata3.push(res.date_data[date].dot)
+                        this.zhudouble.ydata4.push(res.date_data[date].doh)
+                        this.zhudouble.ydata5.push(res.date_data[date].v6dns+res.date_data[date].dnssec+res.date_data[date].dot+res.date_data[date].doh)
+                    });
+                    this.$refs.zhudouble.bingfn(this.zhudouble)
                 }
             }).catch(err => {
                 console.log(err)
@@ -196,25 +223,25 @@ export default {
                     break;
             }
         },
-        // 获取靶场列表字典
-        getRangeDict() {
-            const reqParams = {
-                page: 1,
-                size: 99,
-            }
-            return this.$axios.get(this.$http.api.getTargets, reqParams).then(res => {
-                if (res.code == 200 || res.code == "OK") {
-                    this.rangeDict = res?.result?.items.map(item => {
-                        return {
-                            label: item.target_name,
-                            value: item.id
-                        }
-                    })
-                }
-            }).catch(err => {
-                console.log(err)
-            })
-        }   
+        // // 获取靶场列表字典
+        // getRangeDict() {
+        //     const reqParams = {
+        //         page: 1,
+        //         size: 99,
+        //     }
+        //     return this.$axios.get(this.$http.api.getTargets, reqParams).then(res => {
+        //         if (res.code == 200 || res.code == "OK") {
+        //             this.rangeDict = res?.result?.items.map(item => {
+        //                 return {
+        //                     label: item.target_name,
+        //                     value: item.id
+        //                 }
+        //             })
+        //         }
+        //     }).catch(err => {
+        //         console.log(err)
+        //     })
+        // }
     }
 }
 </script>

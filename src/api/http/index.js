@@ -1,5 +1,35 @@
 export default {
   api: {
+    //任务管理
+    taskList:'/task/',
+    //任务详情
+    taskInfo:'/task/detail',
+    //任务详情日志
+    taskInfoLog:'/task/tp',
+    //代理信息
+    agentQueryList:'/agent/',
+    //代理删除
+    agentDel:'/agent/del',
+    //目标信息获取
+    targetQueryList:'/target/',
+    targetMap:'target/map',
+    //目标信息筛选基础数据
+    targetFilter:'/target/filter',
+    //目标信息时延
+    targetDelay:'/target/delay',
+    taskOps:'/task/ops',
+    //任务创建
+    taskCreate:'/task/create',
+    taskDel:'/task/del',
+    //仪表盘——num
+    sysNum:'/sys/num',
+    //仪表盘-柱状图数据接口
+    sysNumDate:'/sys/num/date',
+    //仪表盘—系统操作日志
+    sysLog:'sys/log',
+    //系统管理——用户列表  **创建用户也是该接口区别为 获取是get  创建是post**
+    user:'/user/',
+
     // 登录
     login: '/token', // 登录
     getMenus: '/api/user/menu', // 获取菜单
@@ -113,6 +143,12 @@ export default {
     asyncUpdateImage: '/api/async/image', // 异步更新镜像
     asyncAddImage: '/api/async/image', // 异步新增镜像
     asyncBuildImage: '/api/async/image/build', // 异步构建镜像
+
+
+
+    //系统管理
+
+    //系统介绍
 
   },
 }

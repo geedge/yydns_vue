@@ -3,7 +3,9 @@
         <div class="headNew" >
             <div class="headNewLeft" >
                 <div class="headNewLeftText">
-                    <span>YYDNS</span>
+<!--                    <span>YYDNS</span>-->
+<!--                    <img src="../img/logyy.jpg">-->
+                    <img src="../img/logyy_美图抠图20240424.png" style="width: 180px">
                 </div>
             </div>
             <div class="headNewCenter" >
@@ -315,7 +317,7 @@
     .headNew{
         width: 100%;
         height: 100%;
-        background-image:url('../img/header.svg');
+        /*background-image:url('../img/header.svg');*/
         background-repeat: no-repeat; /* 可选，防止图像重复 */
         background-size: 100% 100%; /* 宽度为100%，高度自适应保持宽高比 */
         .headNewLeft{
@@ -326,14 +328,17 @@
             width: 22%;
             height: 5%;
             float: left;
-            background-image: url('../img/headerLeft.svg');
-            background-repeat: no-repeat;
-            background-size: 100% auto;
+            /*background-image: url('../img/headerLeft.svg');*/
+            /*background-image: url('../img/logyy_美图抠图20240424.png');*/
+            /*background-repeat: no-repeat;*/
+            /*background-size: 100% auto;*/
             .headNewLeftText{
                 color: #ece9f8;
                 font-size: 20px;
-                margin-top: 3.1%;
-                margin-left: 35%;
+                /*margin-top: 3.1%;*/
+                margin-top: -8%;
+                /*margin-left: 35%;*/
+                margin-left: 10%;
             }
         }
         .headNewCenter{

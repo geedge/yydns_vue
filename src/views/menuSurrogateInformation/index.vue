@@ -1,32 +1,40 @@
 <template>
     <div class="range-manage" ref="appRef">
         <div class="show">
-            <div class="head">
-                <span style="font-size: 16px;float: left;padding-top: 1%">镜像列表</span>
-<!--                <img src="../../img/customImages.png" style="height: 70% ;width: 10%;margin-right: 2%;color: #ffffff" @click="newlyPztj=true">-->
-                <img src="../../img/customImages.png" style="height: 70% ;width: 10%;margin-right: 2%;color: #ffffff" @click="customizationImage(null)">
-                <div class="input" @keyup.enter="updateAndQuery">
-                    <el-input v-model="queryByImageName" placeholder="名称查询输入" suffix icon="">
-                        <template v-slot:suffix>
-                            <div class="icon-group">
-                                <img src="../../img/inputl.png" alt="**">
-                                <img src="../../img/inputIcon.png" alt="*" @click="updateAndQuery">
-                            </div>
-                        </template>
-                    </el-input>
-                </div>
-                <div class="project">
-                    <el-select v-model="selectImageStateValue" placeholder="全部镜像"  @change="selectImageState()">
-                        <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                        </el-option>
-                    </el-select>
-                </div>
-
-
+            <Header
+            ></Header>
+            <div>
+                <span style="font-size: 20px;margin-bottom: 1%;margin-top: 0.5%;float: left;margin-left: 3%;color: #00C0FF">至少需要一个代理才能创建任务,每个代理同时只执行一项任务</span>
+            </div>
+            <div class="project">
+                <el-select v-model="powerValue" placeholder="能力筛选" clearable @change="query">
+                    <el-option
+                            v-for="item in powerFilter"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="project">
+                <el-select v-model="stateValue" placeholder="状态筛选" clearable @change="query">
+                    <el-option
+                            v-for="item in stateFilter"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="project">
+                <el-select v-model="freeValue" placeholder="空闲筛选" clearable @change="query">
+                    <el-option
+                            v-for="item in freeFilter"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
             </div>
             <div class="list" >
                 <el-table class="custom-table"
@@ -44,70 +52,41 @@
                         </template>
                     </el-table-column>
                     <el-table-column align="center"
-                                     prop="image_name"
-                                     label="镜像名称"
+                                     prop="id"
+                                     label="编号"
                                      min-width="200">
                     </el-table-column>
-                    <el-table-column align="center"
-                                     prop="image_version"
-                                     label="镜像版本"
-                                     min-width="100">
+                    <el-table-column align="center" label="IP地址" min-width="300">
+                        <template slot-scope="scope">
+                            <!-- 在这个插槽中自定义单元格的渲染方式 -->
+                            <div style="white-space: pre-line;">
+                                <!-- 使用 v-for 循环遍历每个 IP 地址，并使用换行符分隔 -->
+                                <span v-for="(ip, index) in scope.row.ipaddr" :key="index">
+                                    {{ ip }}
+                                     <br> <!-- 在每个 IP 地址后面添加换行符 -->
+                                </span>
+                            </div>
+                        </template>
                     </el-table-column>
                     <el-table-column align="center"
-                                     prop="image_type"
-                                     label="镜像类别"
-                                     min-width="100">
-                    </el-table-column>
-                    <el-table-column align="center"
-                                     prop="publish_time"
-                                     label="推送时间"
-                                     min-width="200">
-                    </el-table-column>
-                    <el-table-column align="center"
-                                     prop="image_size"
-                                     label="镜像大小"
+                                     prop="atype"
+                                     label="能力类型"
                                      min-width="150">
                     </el-table-column>
-                    <el-table-column align="center"
-                                     label="构建方式"
-                                     min-width="130">
-                        <template slot-scope="scope">
-                            <span v-if="scope.row.define_image.length===0">
-                                导入
-                            </span>
-                            <span v-if="scope.row.define_image.length>0">
-                                {{scope.row.define_image[0].establish_mode}}
-                            </span>
-                        </template>
+                    <el-table-column align="center"  label="当前状态" min-width="100">
+                        <template slot-scope="scope">{{ scope.row.status?"在线":"离线" }}</template>
                     </el-table-column>
-                    <el-table-column align="center"
-                                     label="镜像状态"
-                                     min-width="130">
-                        <template slot-scope="scope">
-                            <span v-if="scope.row.define_image.length===0">
-                                已构建
-                            </span>
-                            <span v-if="scope.row.define_image.length>0">
-                                {{scope.row.define_image[0].has_build==='True'?scope.row.define_image[0].build_status==='True'?'已构建':'构建失败':'未构建'}}
-                            </span>
-                        </template>
+                    <el-table-column align="center"  label="是否空闲" min-width="100">
+                        <template slot-scope="scope">{{ scope.row.idle?"空闲":"执行中" }}</template>
                     </el-table-column>
+
                     <el-table-column align="center"
                                      label="操作"
-                                     min-width="380">
+                                     min-width="150">
                         <template slot-scope="scope">
-                            <!--                            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
-                            <el-button type="text" size="medium" :style="{'color': (scope.row.define_image.length===0) ? '#565e6e': '#409eff'}"
-                                @click="scope.row.define_image.length===0?'':getInfo(scope.row)">查看详情</el-button>
-                            <el-button type="text" size="medium" :style="{'color': (scope.row.image_type==='system' || scope.row.image_type==='buildin') ? '#565e6e': '#409eff'}"
-                                @click="(scope.row.image_type==='system' || scope.row.image_type==='buildin') ? '' : customizationImage(scope.row)">修改配置</el-button>
-                            <el-button type="text" size="medium" :style="{'color': (scope.row.define_image.length===0
-                            ||(scope.row.define_image[0].has_build==='True'&&scope.row.define_image[0].build_status==='True')) ? '#565e6e': '#409eff'}"
-                                       @click="(scope.row.define_image.length===0
-                                       ||((scope.row.define_image[0].has_build==='True'&&scope.row.define_image[0].build_status==='True')))?NobuildingImage():buildImage(scope.row.id)">
-                                {{scope.row.define_image.length===0?'构建镜像':(scope.row.define_image[0].has_build==='True'&&scope.row.define_image[0].build_status==='False')?"重新构建":"构建镜像"}}
-                                </el-button>
-                            <el-button type="text" size="medium" @click="delImage(scope.row.id)">删除镜像</el-button>
+                            <el-button type="text" size="medium" style="{'color': '#409eff'}"
+                                @click="getInfo(scope.row)">详情</el-button>
+                            <el-button type="text" size="medium" @click="agentdel(scope.row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -125,245 +104,67 @@
             </el-pagination>
             <div class="mask"></div>
         </div>
-        <div class="infoTar" v-if="infoType==='tar'">
-            <i class="el-icon-close" style="float: right; padding-right: 7%;padding-top: 6%" @click="infoType=''"></i>
-            <div class="infoTypography">
-                <div class="container">
-                    <div class="row">
-                        <div class="cell">Tar包名称：{{infoType}}</div>
-                        <div class="cell">上传时间：{{infoType}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="cell">Tar包大小：{{infoType}}</div>
-                        <div class="cell">状态：{{infoType}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="cellA">上传者：{{infoType}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="cellA">描述：{{infoType}}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="anType">
-                <div>
-                    <el-button class="glBut" type="primary" @click="closeInfo()">关闭</el-button>
-                </div>
-            </div>
-
-
-
-        </div>
-        <div class="infoDocker" v-if="infoType==='docker'">
-            <i class="el-icon-close" style="float: right; padding-right: 5%;padding-top: 2%" @click="closeInfo()"></i>
-            <div  class="infoCode">
-                <Card>
-                    <prism-editor class="my-editor" v-model="code" :highlight="highlighter" readonly :line-numbers="true"></prism-editor>
-                </Card>
-            </div>
-            <div  class="infoInfo">
-                <div>
-                    <div class="infoText">
-<!--                        状态：{{infoType}}-->
-                        状态：
-                        <template>
-                            <span v-if="addImage.define_image.length===0">
-                                已构建
-                            </span>
-                            <span v-if="addImage.define_image.length>0">
-                                {{addImage.define_image[0].has_build==='True'?addImage.define_image[0].build_status==='True'?'已构建':'构建失败':'未构建'}}
-                            </span>
-                        </template>
-                    </div>
-                    <div class="infoText">
-                        上传者99：{{addImage.user_id}}
-                    </div>
-                    <div class="infoText">
-                        上传时间：{{addImage.publish_time}}
-                    </div>
-                    <div class="infoText">
-                        描述：{{addImage.image_description}}
-                    </div>
-                </div>
-                <div style="margin-top: 135%">
-                    <div>
-                        <el-button  type="primary" @click="closeInfo()">关闭</el-button>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
         <div class="popup" v-if="newlyPztj">
             <!-- 在此处指定弹窗的样式和内容 -->
-<!--            <i class="el-icon-close" style="float: right; padding-right: 7%;padding-top: 2.8%" @click="newlyPztj=false"></i>-->
             <i class="el-icon-close" style="float: right; padding-right: 7%;padding-top: 2.8%" @click="CustomizationImageFales()"></i>
-            <div class="tag">
-                <el-tag class="tags" :style="{'color': (tag==='基本配置') ? '#f8fdff': '#565e6e'}" @click="updateTag('基本配置'),tagStep=1">基本配置</el-tag>
-                <el-tag class="tags" :style="{'color': (tag==='镜像配置') ? '#f8fdff': '#565e6e'}" @click="updateTag('镜像配置'),tagStep=2">镜像配置</el-tag>
-                <el-tag class="tags" :style="{'color': (tag==='构建') ? '#f8fdff': '#565e6e'}" @click="updateTag('构建'),tagStep=3">构建</el-tag>
-            </div>
-            <div class="jbpz" v-if="tagStep===1">
-                <div class="srkType">
-                    <span style="margin-right: 3%">镜像名称</span>
-                    <el-input class="srk" v-model="addImage.image_name" placeholder="请输入内容"></el-input>
-                </div>
-                <div class="srkType">
-                    <span style="margin-right: 3%">镜像版本</span>
-                    <el-input class="srk" v-model="addImage.image_version" placeholder="请输入内容"></el-input>
-                </div>
-                <div class="srkType">
-                    <span style="margin-right: 3%">镜像描述</span>
-                    <el-input class="srk" v-model="addImage.image_description" placeholder="请输入内容"></el-input>
-                </div>
-                <div class="radioType">
-                    <div style="margin-right: 25%">
-                        <span style="margin-right: 6%">拥有权</span>
-                        <el-radio v-model="addImage.attribute" label="private">私有</el-radio>
-                        <el-radio v-model="addImage.attribute" label="public">公有</el-radio>
-                    </div>
-                </div>
-                <div class="anType">
-                    <div>
-                        <el-button class="glBut" type="primary" @click="CustomizationImageFales()">取消</el-button>
-                        <el-button class="glBut" type="primary" @click="tagStep+=1 , tag='镜像配置'">下一步</el-button>
-                    </div>
-                </div>
-            </div>
-            <div class="jbpz" v-if="tagStep===2" >
-<!--                <div class="srkType">-->
-<!--                    <span style="margin-right: 3%">镜像名称</span>-->
-<!--                    <el-input class="srk" v-model="addImage.image_name" placeholder="请输入内容"></el-input>-->
-<!--                </div>-->
-<!--                <div class="radioType">-->
-<!--                    <div style="margin-right: 15%">-->
-<!--                        <span style="margin-right: 5%">镜像构建方式</span>-->
-<!--                        <el-radio v-model="dockerOrTar" label="dockerfile">Dockerfile</el-radio>-->
-<!--                        <el-radio v-model="dockerOrTar" label="tar">Tar包导入</el-radio>-->
-<!--                    </div>-->
-<!--                </div>-->
-                <div class="tar" v-if="dockerOrTar==='tar'">
-                    <span style="margin-right: 5%;margin-top: 4%">上传Tar包</span>
-                    <el-upload
-                            class="upload-demo"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="1"
-                            :on-exceed="handleExceed"
-                            :file-list="fileList">
-                        <div class="uploadBgImg">
-                            <!--                            只能上传jpg/png文件，且不超过500kb-->
-                        </div>
-                    </el-upload>
-                </div>
-                <div class="radioType" v-if="dockerOrTar==='dockerfile'">
-                    <div style="margin-right: 15%;margin-top: 5%">
-<!--                        <span style="margin-right: 5%">代码形式</span>-->
-                        <span style="margin-right: 5%">镜像构建方式</span>
-                        <el-radio v-model="radioOwnership2" label="1">直接上传</el-radio>
-                        <el-radio v-model="radioOwnership2" label="2">git拉取</el-radio>
-                    </div>
-                </div>
-                <div class="tar" v-if="dockerOrTar==='dockerfile'&&radioOwnership2==='1'" style="margin-left: 36%">
-<!--                    <div class="uploadBgImg">-->
-                        <input class="uploadBgImg" type="file" @change="onFileChange">
-                        <!--                            只能上传jpg/png文件，且不超过500kb-->
-<!--                    </div>-->
-<!--                    <el-upload-->
-<!--                            class="upload-demo"-->
-<!--                            :on-preview="handlePreview"-->
-<!--                            :on-remove="handleRemove"-->
-<!--                            :before-remove="beforeRemove"-->
-<!--                            multiple-->
-<!--                            :limit="1"-->
-<!--                            :on-exceed="handleExceed"-->
-<!--                            :file-list="fileList">-->
-<!--                        <div class="uploadBgImg">-->
-<!--                            &lt;!&ndash;                            只能上传jpg/png文件，且不超过500kb&ndash;&gt;-->
+            <span style="color: #f5f7f0;font-size: 20px;float: left;margin-left: 6%;margin-top: 1%">代理{{info.id}}详情</span>
+            <div class="jbpz">
+                <template>
+                   <el-row style="display: flex; flex-direction: row;">
+                       <el-col :span="20">当前状态</el-col>
+                       <el-col :span="20">{{info.status?'在线':'离线'}}</el-col>
+                   </el-row>
+                    <el-divider content-position="center"></el-divider>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>编号</el-col>
+                        <el-col>{{info.id}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>通信端口</el-col>
+                        <el-col>{{info.port}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>运行平台</el-col>
+                        <el-col>{{info.sys}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>IP地址</el-col>
+                        <el-col>
+                            <span v-for="i in info.ipaddr">
+                                {{i}}
+                                <br>
+                            </span>
+<!--                            {{info.ipaddr}}-->
+                        </el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>CPU核心数</el-col>
+                        <el-col>{{info.cpu_num}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
 
-<!--                        </div>-->
-<!--                    </el-upload>-->
-                </div>
-                <div class="tar" v-if="dockerOrTar==='dockerfile'&&radioOwnership2==='1'" style="margin-left: 36%">
-                    <span style="color: #00C0FF">仅支持zip tar.gz，且文件名不可包含特殊字符 '!@#)(' </span>
-                </div>
-                <div  v-if="radioOwnership2==='2'&&dockerOrTar==='dockerfile'">
-                    <div class="srkType">
-                        <span style="margin-right: 3%">git地址</span>
-                        <el-input class="srk" v-model="addImage.git_address" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="srkType">
-                        <span style="margin-right: 3%">分支名</span>
-                        <el-input class="srk" v-model="addImage.git_branch" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="srkType">
-                        <span style="margin-right: 3%">git账号</span>
-                        <el-input class="srk" v-model="addImage.git_account" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="srkType">
-                        <span style="margin-right: 3%">git密码</span>
-                        <el-input class="srk" v-model="addImage.git_password" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="srkType">
-                        <span style="margin-right: 3%">启动命令</span>
-                        <el-input class="srk" v-model="addImage.run_command" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="srkType">
-                        <span style="margin-right: 3%">启动参数</span>
-                        <el-input class="srk" v-model="addImage.run_args" placeholder="请输入内容"></el-input>
-                    </div>
-                    <div class="radioType" v-if="addImage.establish_mode==='git'">
-                        <div style="margin-left: 1%">
-                            <span style="margin-right: 5%">递增镜像版本号</span>
-                            <el-radio v-model="addImage.version_operate" label="add">是</el-radio>
-                            <el-radio v-model="addImage.version_operate">其他</el-radio>
-                            <el-input style="width: 20%;margin-left: 2%;background-color: #0c295b;display: inline-block;border: none;"
-                                      v-model="addImage.image_version" placeholder="必须含有数字" v-if="addImage.version_operate!='add'"></el-input>
-                        </div>
-                    </div>
-                </div>
-                <div class="dockerFile" v-if="radioOwnership2==='2'">
-                    <el-upload
-                            class="upload-demo"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="1"
-                            :on-exceed="handleExceed"
-                            :file-list="fileList">
-                        <div class="uploadBgImg">
-                            <!--                            只能上传jpg/png文件，且不超过500kb-->
-                        </div>
-                    </el-upload>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>系统内存</el-col>
+                        <el-col>{{info.mem}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
 
-                </div>
-                <div class="anType">
-                    <div>
-                        <el-button class="glBut" type="primary" @click="CustomizationImageFales()">取消</el-button>
-                        <el-button class="glBut" type="primary" @click="tagStep-=1 , tag='基本配置'">上一步</el-button>
-                        <el-button class="glBut" type="primary" @click="tagStep+=1 , tag='构建'">下一步</el-button>
-                    </div>
-                </div>
+                    <el-row style="display: flex; flex-direction: row;">
+                        <el-col>运行时间</el-col>
+                        <el-col>{{info.start_time}}</el-col>
+                    </el-row>
+                    <el-divider content-position="center"></el-divider>
+
+                </template>
+                <footer class="anDiv">
+                    <el-button class="glBut" type="primary" @click="CustomizationImageFales">关闭</el-button>
+                </footer>
             </div>
-            <div class="jbpz" v-if="tagStep===3">
-                <div style="width: 50%;float: left;margin-left: 10%">
-                    <div style="margin-right: 10%">
-                        <div><el-radio v-model="addImage.direct"  :label="getLabel(true)" style="margin-top: 15%">直接构建</el-radio></div>
-                        <div><el-radio v-model="addImage.direct"  :label="getLabel(false)" style="margin-top: 15%">仅添加配置</el-radio></div>
-                    </div>
-                </div>
-                <div class="anType">
-                    <div>
-                        <el-button class="glBut" type="primary" @click="CustomizationImageFales()">取消</el-button>
-                        <el-button class="glBut" type="primary" @click="tagStep-=1 , tag='镜像配置'">上一步</el-button>
-                        <el-button class="glBut" type="primary" @click="image_id===0?addImageToBark():updateImageToBark()">确定</el-button>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </template>
@@ -375,19 +176,85 @@
     import { highlight, languages } from 'prismjs/components/prism-core';
     import 'prismjs/components/prism-clike';
     import 'prismjs/components/prism-javascript';
-    // import 'prismjs/themes/prism-solarizedlight.css';  // 代码的其他样式风格
-    // import 'prismjs/themes/prism-coy.css';
-    // import 'prismjs/themes/prism-tomorrow.css';
     import 'prismjs/themes/prism.css';  // 如果想代码换个样式风格，把这个注释了，上面的三个放开一个
+    import Header from './module/Header.vue'
+
     export default {
         name: "imageMange",
         // props:['fTag','fInput','fFrom','FIsConfigQuery'],
         // components:{
         //     router
         // },
-        components: { PrismEditor },
+        components: { PrismEditor ,Header},
         data(){
             return{
+                infoTable:  [
+                    {
+                        id: 1,
+                        title: "用户ID",
+                        value: 1,
+                    },
+                    {
+                        id: 2,
+                        title: "微信昵称",
+                        value:2,
+                    },
+                    {
+                        id: 3,
+                        title: "会员名称",
+                        value:3,
+                    }
+                ],
+                info:[],
+                powerValue:'',
+                stateValue:'',
+                freeValue:'',
+                powerFilter:[
+                    {
+                      value:'全部',
+                      label:'全部'
+                    },
+                    {
+                        value:'渗透',
+                        label:'渗透'
+                    },
+                    {
+                        value:'状态感知',
+                        label:'状态感知'
+                    },
+                    {
+                        value:'参数感知',
+                        label:'参数感知'
+                    },
+                ],
+                stateFilter:[
+                    {
+                        value:'全部',
+                        label:'全部'
+                    },
+                    {
+                        value:'在线',
+                        label:'在线'
+                    },
+                    {
+                        value:'离线',
+                        label:'离线'
+                    },
+                ],
+                freeFilter:[
+                    {
+                        value:'全部',
+                        label:'全部'
+                    },
+                    {
+                        value:'空闲',
+                        label:'空闲'
+                    },
+                    {
+                        value:'执行中',
+                        label:'执行中'
+                    },
+                ],
                 file:'',
                 image_id:0,
                 addImage:{
@@ -427,7 +294,6 @@
                 code: '/**\n* JS判断两个数组是否相等\n* @param {Array} arr1\n* @param {Array} arr2\n* @returns {boolean} 返回true 或 false\n*/\nfunction arrayEqual(arr1, arr2) {\n    if (arr1 === arr2) return true;\n    if (arr1.length != arr2.length) return false;\n    for (var i = 0; i < arr1.length; ++i) {\n        if (arr1[i] !== arr2[i]) return false;\n    }\n    return true;\n}',
                 infoType:"",
                 tag:"基本配置",
-                tagStep:1,
                 tableData:[],
                 total:0,
                 multipleSelection: [],
@@ -449,19 +315,6 @@
                 radioOwnership2: '1',
                 radioUpdateImage: '2',
                 radioHowToCreate: '1',
-                options: [{
-                    value: '',
-                    label: '全部镜像'
-                }, {
-                    value: 'system',
-                    label: '系统'
-                }, {
-                    value: 'buildin',
-                    label: '内置'
-                }, {
-                    value: 'define',
-                    label: '自定义'
-                }],
                 delTimer: null,
                 counter: 0
 
@@ -472,7 +325,8 @@
         watch: {
         },
         created() {
-            this.getImages()
+            // this.getImages()
+            this.query();
         },
         destroyed() {
             // if (this.pendingTimer) {
@@ -486,6 +340,50 @@
             this.counter = 0
         },
         methods:{
+            formatIPs(row, column, cellValue) {
+                // let formattedIPs = cellValue.join(',\n');
+                // return formattedIPs;
+                // 使用 map 方法处理每个 IP 地址，然后连接成带有换行符的字符串
+                let formattedIPs = cellValue.map(ip => ip).join(',\n');
+
+                return formattedIPs;
+
+            },
+            query(){
+                let data={
+                    "page":this.page,
+                    "per_page":this.size,
+                    "atype":this.powerValue==='参数感知'?'csgz':(this.powerValue==='状态感知'?'ztgz':(this.powerValue==='渗透'?'gjst':'all')),
+                    "status":this.stateValue==='在线'?1:(this.stateValue==='离线'?0:2),
+                    "idle":this.freeValue==='空闲'?1:(this.stateValue==='执行中'?0:2)
+                }
+                this.$axios.get(this.$http.api.agentQueryList,data).then(res=>{
+                    if(res.code===200){
+                        this.tableData=res.agent_data
+                        this.total=res.total
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+
+
+            },
+            agentdel(val){
+                let data={
+                    "id":val.toString(),
+                }
+                this.$axios.post(this.$http.api.agentDel,data).then(res=>{
+                    if(res.code===200){
+                        this.$message.success(res.msg)
+                    }else {
+                        this.$message.error(res.msg)
+                    }
+                }).catch(err=>{
+                    console.log(err)
+                })
+
+
+            },
             onFileChange(event) {
                 this.file = event.target.files[0];
             },
@@ -502,9 +400,6 @@
 
             },
             thereToOne(val){
-                console.log("RRRRRRRRRRRRRRRRRRRRRRRRR")
-                console.log(val)
-                console.log("RRRRRRRRRRRRRRRRRRRRRRRRR")
                 if(val==='tar'){
                     this.dockerOrTar='tar'
                 }else {
@@ -525,30 +420,14 @@
             CustomizationImageFales(){
                 this.newlyPztj=false;
                 document.querySelector('.mask').style.display = 'none'
-                this.image_id=0
-                this.addImage=this.barkImageParmer
-            },
-            customizationImage(val){
-                this.tagStep=1;
-                this.tag="基本配置"
-                if(val!=null){
-                    this.image_id=val.id
-                    this.addImage=val
-                    this.infoImage(this.image_id);
-                    this.thereToOne(val.define_image[0].establish_mode)
-                }
-                this.newlyPztj=true;
-                document.querySelector('.mask').style.display = 'block'
-            },
-            getLabel(boolValue) {
-                return boolValue ? true: false;
+                // this.image_id=0
+                // this.addImage=this.barkImageParmer
             },
             buildImage(val){
                 let data={
                     "image_id":val,
                 }
                 this.$axios.get(this.$http.api.asyncBuildImage,data).then(res=>{
-                    console.log('getImages======',res)
                     if(res.code===200){
                         this.CustomizationImageFales()
 
@@ -578,7 +457,6 @@
                     "image_id":val,
                 }
                 this.$axios.get(this.$http.api.infoImage,data).then(res=>{
-                    console.log('getImages======',res)
                     if(res.code===200){
                         this.addImage.git_account=res.result.pipeline.git_account;
                         this.addImage.git_password=res.result.pipeline.git_password;
@@ -598,7 +476,6 @@
                     "image_id":val,
                 }
                 this.$axios.delete(this.$http.api.delImage,data).then(res=>{
-                    console.log('getImages======',res)
                     if(res.code===200){
                         this.image_id=0
                         this.getImages()
@@ -630,7 +507,6 @@
                     // }
                 };
                 this.$axios.put(this.$http.api.asyncUpdateImage, formData ,config).then(res=>{
-                    console.log('getImages======',res)
                     if(res.code===200){
                         this.CustomizationImageFales()
 
@@ -707,59 +583,37 @@
                 })
 
             },
-            updateAndQuery(){
-                this.page=1;
-                this.getImages()
-            },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
                 this.size=val
-                this.getImages()
+                this.query()
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
                 this.page=val
-                this.getImages()
+                this.query()
             },
             getImages(){
                 let data={
-                    // "image_name":"da",
-                    "image_type":this.selectImageStateValue,
-                    "image_name":this.queryByImageName,
-                    "image_state":this.selectImageStateValue,
-                    "page":this.page,
-                    "size":this.size
+
                 }
-                this.$axios.get(this.$http.api.getImages,data).then(res=>{
+                this.$axios.get(this.$http.api.agentQueryList,data).then(res=>{
                         console.log('getImages======',res)
-                        if(res.code===200){
-                            this.tableData=res.result.items
-                            this.total=res.result.total
-                        }
+                        // if(res.code===200){
+                            this.tableData=res.agent_data
+                            this.total=100
+                        // }
                     }).catch(err=>{
                         console.log(err)
                 })
             },
-            selectImageState(){
-                this.page=1
-                console.log(this.selectImageStateValue)
-                this.getImages()
-            },
-            NobuildingImage(){
-                console.log("无需重新构建")
-            },
             highlighter(code) {
                 return highlight(code, languages.js)
             },
-            getInfo(info){
+            getInfo(val){
+                this.info=val
+                this.newlyPztj=true
                 document.querySelector('.mask').style.display = 'block'
-                this.addImage=info;
-                if(info.define_image[0].establish_mode==='tar'){
-                    this.infoType='tar'
-                }else if(info.define_image[0].establish_mode==='git'
-                    || info.define_image[0].establish_mode==='code'){
-                    this.infoType='docker'
-                }
             },
             updateTag(val){
                 this.tag=val
@@ -768,19 +622,15 @@
                 this.multipleSelection = val;
             },
             handleRemove(file, fileList) {
-                console.log("111111111")
                 console.log(file, fileList);
             },
             handlePreview(file) {
-                console.log("2222222222222")
                 console.log(file);
             },
             handleExceed(files, fileList) {
-                console.log("3333333333333")
                 this.$notify.warning(`当前限制选择 1个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             beforeRemove(file, fileList) {
-                console.log("444444444444")
                 return this.$confirm(`确定移除 ${ file.name }？`);
             },
             // 获取任务进度
@@ -825,12 +675,42 @@
 </script>
 
 <style lang='less' scoped="scoped">
+    .state{
+        display: inline-block;
+        height: auto;
+        width: 10%;
+        margin-left: 0.5%;
+        .custom-popper .el-select-dropdown {
+            max-height: 3px;
+        }
+    }
+    .project{
+        display: inline-block;
+        height: auto;
+        width: 10%;
+        margin-left: 0.5%;
+        margin-right: 3%;
+        .el-input::placeholder {
+            width: auto;
+        }
+        .icon-group {
+            display: flex; /* 设置容器为 Flexbox 容器 */
+            align-items: center; /* 垂直居中图片 */
+            gap: 5px; /* 图片和文字之间的间距，可以根据需要进行调整 */
+
+        }
+        .icon-group img {
+            transform: scale(1);
+            margin-right: 15px;
+            margin-top: 6px;
+        }
+
+    }
     .custom-table {
         width: 100%;
         height: 100%;
     }
     .my-editor {
-        /*background: #fa3919;*/
         background: transparent;
         /*color: #000;*/
         color: #fafafa;
@@ -843,9 +723,7 @@
     }
 
     .my-editor ::v-deep .prism-editor__textarea::selection{
-        /*background-color: #cce2ff !important;*/
         background-color: #322dff !important;
-        /*color: #000 !important;*/
         color: #ed1210 !important;
         user-select:none;
     }
@@ -860,10 +738,9 @@
     }
     .popup{
         z-index: 997;
-        width: 40%;
-        height: 70%;
+        width: 43%;
+        height: 75%;
         position: absolute; /* 绝对定位 */
-        /*position: relative;*/
         top: 50%; /* 向下偏移50% */
         left: 50%; /* 向右偏移50% */
         transform: translate(-50%, -50%); /* 回移50% */
@@ -882,12 +759,15 @@
             }
         }
         .jbpz{
+            margin-top: 10%;
+            margin-left: 15%;
             height: 100%;
+            width: 70%;
+            text-align: center;
             position:relative;
             .project{
                 display: inline-block;
                 width: 100%;
-                /*float: left;*/
                 margin-top: 3%;
                 text-align: center;
                 padding-right: 10%;
@@ -949,16 +829,12 @@
                 bottom:4%;
                 left: 50%;
                 transform: translateX(-50%);
-                /*margin-bottom: 2%;*/
-                /*width: 100%;*/
-                /*text-align: center;*/
                 .glBut{
                     width: 90px;
                     height: 30px;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    /*margin-left: 10%;*/
                     background-color: rgba(24, 133, 234, 0.2);
                     color: #1b7cc4;
                 }
@@ -969,8 +845,6 @@
     .range-manage{
         width: 100%;
         height: 100%;
-        /*background-color: #010f4e;*/
-        /*background-color: rgba(255, 25, 49, 0.4);*/
         float: right;
         position: relative; /* 确保相对定位生效 */
         .infoTar{
@@ -994,16 +868,13 @@
                 .container{
 
                     width: 85%;
-                    /*background-color: #af321e;*/
                     .row {
                         width: 100%;
                         .cell {
                             float: left;
                             display: inline-block;
                             width: 50%;
-                            /*background-color: #2daf23;*/
                             padding: 10px;
-                            /*border: 1px solid #ccc;*/
                             border: none;
                             text-align: left;
                             font-size: 18px;
@@ -1013,9 +884,7 @@
                             float: left;
                             display: inline-block;
                             width: 51%;
-                            /*background-color: #2daf23;*/
                             padding: 10px;
-                            /*border: 1px solid #ccc;*/
                             border: none;
                             text-align: left;
                             font-size: 18px;
@@ -1174,8 +1043,7 @@
             }
             .list{
                 width: 95%;
-                height: 84%;
-                /*max-height: 84%;*/
+                height: 76%;
                 margin-left: 2.5%;
                 overflow-y: auto;
                 overflow-y: scroll;
@@ -1194,30 +1062,30 @@
             //         scrollbar-width: none;
             //     }
             // }
-            .page{
-                width: 95%;
-                height: 5%;
-                margin-left: 2%;
-                /*background-color: #ec171d;*/
-                padding-left: 35%;
-                padding-top: 0.9%;
-                .el-pagination {
-                    transform: scale(1.5);
-                }
-                .el-pagination .btn-next, .el-pagination .btn-prev {
-                    background: #0b6f08 !important;
-                    color: #00F1FF !important;
-                }
-                /*.el-pagination .number:not(.active) {*/
-                /*    background-color: red !important;*/
-                /*    color: white;*/
-                /*}*/
-                /*.el-pagination button:disabled{*/
-                /*    background-color: #a10e0e;*/
-                /*}*/
+            /*.page{*/
+            /*    width: 95%;*/
+            /*    height: 5%;*/
+            /*    margin-left: 2%;*/
+            /*    !*background-color: #ec171d;*!*/
+            /*    padding-left: 35%;*/
+            /*    padding-top: 0.9%;*/
+            /*    .el-pagination {*/
+            /*        transform: scale(1.5);*/
+            /*    }*/
+            /*    .el-pagination .btn-next, .el-pagination .btn-prev {*/
+            /*        background: #0b6f08 !important;*/
+            /*        color: #00F1FF !important;*/
+            /*    }*/
+            /*    !*.el-pagination .number:not(.active) {*!*/
+            /*    !*    background-color: red !important;*!*/
+            /*    !*    color: white;*!*/
+            /*    !*}*!*/
+            /*    !*.el-pagination button:disabled{*!*/
+            /*    !*    background-color: #a10e0e;*!*/
+            /*    !*}*!*/
 
 
-            }
+            /*}*/
             // 遮罩层
             .mask{
                 position: fixed; /*将元素设置为固定定位*/

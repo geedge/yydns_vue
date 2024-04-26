@@ -1,18 +1,18 @@
 <template>
 <div class="head">
     <div class="target-select">
-        <span style="font-size: 14px;float: left;padding-top: 1%">系统介绍页面</span>
+        <span style="font-size: 24px;float: left;padding-top: 1%">能力指代不同渗透策略,代理将根据策略逻辑以及主控端下发的生成参数生成对应的载荷</span>
     </div>
-    <div class="input">
-        <el-input v-model="country_name" placeholder="查询" suffix icon="">
-            <template v-slot:suffix>
-                <div class="icon-group">
-                    <img src="../../../img/inputl.png" alt="**">
-                    <img src="../../../img/inputIcon.png" alt="*" @click="query">
-                </div>
-            </template>
-        </el-input>
-    </div>
+<!--    <div class="input">-->
+<!--        <el-input v-model="country_name" placeholder="查询" suffix icon="">-->
+<!--            <template v-slot:suffix>-->
+<!--                <div class="icon-group">-->
+<!--                    <img src="../../../img/inputl.png" alt="**">-->
+<!--                    <img src="../../../img/inputIcon.png" alt="*" @click="query">-->
+<!--                </div>-->
+<!--            </template>-->
+<!--        </el-input>-->
+<!--    </div>-->
 </div>
 </template>
 

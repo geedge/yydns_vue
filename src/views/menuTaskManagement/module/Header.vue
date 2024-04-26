@@ -1,9 +1,12 @@
 <template>
 <div class="head">
     <div class="target-select">
-        <span style="font-size: 14px;float: left;padding-top: 1%">角色列表</span>
+        <span style="font-size: 30px;float: left;padding-top: 1%">任务列表</span>
     </div>
-    <img class="add-btn" src="../../../img/btn/addRoleBtn.svg" @click="addRole">
+<!--    <img class="add-btn" src="../../../img/btn/addRoleBtn.svg" @click="addRole">-->
+    <el-row>
+        <el-button type="primary" plain @click="addRole">新增任务</el-button>
+    </el-row>
 </div>
 </template>
 

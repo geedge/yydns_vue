@@ -10,6 +10,7 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
+
 export default new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
@@ -67,8 +68,23 @@ export default new Router({
           title: '系统介绍',
           component: () => import('@/views/menuSysIntroduce/index'),
           meta: { requiresAuth: true } // 需要登录才能访问
+        },
+        {
+          path: 'menuTaskInfo',
+          name: 'menuTaskInfo',
+          title: '任务详情',
+          component: () => import('@/views/menuTaskInfo/index'),
+          meta: { requiresAuth: true } // 需要登录才能访问
+        },
+        {
+          path: 'menuMBZTGZ',
+          name: 'menuMBZTGZ',
+          title: '目标状态详情',
+          component: () => import('@/views/menuMBZTGZ/index'),
+          meta: { requiresAuth: true } // 需要登录才能访问
         }
       ]
     }
   ]
+
 })

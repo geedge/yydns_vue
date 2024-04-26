@@ -4,6 +4,9 @@
           <Header
               @addRole="addRole"
           ></Header>
+          <div>
+              <span style="font-size: 20px;margin-bottom: 1%;margin-top: 0.5%;float: left;margin-left: 3%;color: #00C0FF">至少需要一个代理才能创建任务,每个代理同时只执行一项任务</span>
+          </div>
           <div class="list" >
               <el-table
                   class="custom-table"
@@ -23,31 +26,38 @@
                       width="150"/>
                   <el-table-column 
                       align="center"
-                      prop="role_name"
-                      label="角色"
-                      width="200"/>
+                      prop="id"
+                      label="任务编号"
+                      width="280"/>
+                  <el-table-column
+                          align="center"
+                          prop="agent"
+                          label="执行代理编号"
+                          width="280"/>
                   <el-table-column
                       align="center"
-                      prop="permissions"
-                      label="权限"
+                      prop="status"
+                      label="当前状态"
                       min-width="150">
                       <template slot-scope="scope">
-                        <div class="permission-btn" v-for="permission in scope.row.permissions" :key="scope.row.id + '' + permission.id">
-                          <span v-loading="permission.delLoading">
-                            {{ permission.permission_name }}
-                          </span>
-                          <svg-icon icon-class="closeBtn" @click="delPermission(permission, scope.row.id)"></svg-icon>
-                        </div>
+                          <el-tag type="info" v-if="scope.row.status==='stop'">暂停</el-tag>
+                          <el-tag type="warning" v-if="scope.row.status==='working'">执行中</el-tag>
+                          <el-tag type="danger" v-if="scope.row.status==='finish'">已完成</el-tag>
                       </template>
                   </el-table-column>
                   <el-table-column
+                          align="center"
+                          prop="create_time"
+                          label="创建时间"
+                          width="280"/>
+                  <el-table-column
                       align="center"
                       label="操作"
-                      width="200"
+                      width="250"
                   >
                       <template slot-scope="scope">
-                          <el-button type="text" size="medium" @click="edit(scope.row)">修改权限</el-button>
-                          <el-button type="text" size="small" :loading="scope.row.delLoading" @click="del(scope.row)">删除</el-button>
+                          <el-button type="text" size="medium" @click="taskInfo(scope.row)">详情</el-button>
+                          <el-button type="text" size="small"  @click="del(scope.row.id)">删除</el-button>
                       </template>
                   </el-table-column>
               </el-table>
@@ -56,7 +66,7 @@
               background
               :current-page="page"
               :page-sizes="[10, 20, 30, 40]"
-              :page-size="10"
+              :page-size="20"
               :total="total"
               layout="total, sizes, prev, pager, next, jumper"
               @size-change="handleSizeChange"
@@ -83,7 +93,7 @@ export default {
   data(){
       return{
           page: 1,
-          size: 10,
+          size: 20,
           total: 0,
           isAdd: false,
           loading: false,
@@ -97,25 +107,22 @@ export default {
   },
   watch: {},
   created() {
-      this.getPermissionDict()
       this.init()
   },
   methods:{
       init(params={}) {
-        //   this.tableData = getTargetsResponse?.result?.items
-        //   this.total = getTargetsResponse?.result?.total
-
           // TODO: 暂时注释接口
           const reqParams = {
-              page: this.page,
-              size: this.size,
+              "page": this.page,
+              "per_page": this.size,
               ...params
           }
           this.loading = true
-          this.$axios.get(this.$http.api.getRoleList, reqParams).then(res => {
-              if (res.code == 200 || res.code == "OK") {
-                  this.total = res?.result?.total
-                  this.tableData = res?.result?.items
+          this.$axios.get(this.$http.api.taskList, reqParams).then(res => {
+              // if (res.code == 200 || res.code == "OK") {
+              //     this.total = res?.data?.total
+                  this.total = 100
+                  this.tableData = res?.data
                   this.tableData.map(item => {
                     item.permissions.map(permi => {
                         this.$set(permi, 'delLoading', false)
@@ -123,7 +130,7 @@ export default {
                     })
                     return item
                   })
-              }
+              // }
           }).catch(err => {
               console.log(err)
           }).finally(() => {
@@ -136,7 +143,7 @@ export default {
       // 打开添加角色dialog
       addRole() {
           this.isAdd = true
-          this.$refs.userForm.title = '新增角色'
+          // this.$refs.userForm.title = '新增角色'
           document.querySelector('.mask').style.display = 'block'
           this.$refs.userForm.visible = true
       },
@@ -160,18 +167,18 @@ export default {
           })
       },
       // 删除
-      del(row) {
-          this.$confirm('此操作将永久删除该角色, 是否继续?', '确认删除', {
-              confirmButtonText: '确认删除',
-              cancelButtonText: '取消',
-              type: 'info'
-              }).then(() => {
-                  this.delUser(row)
-              }).catch(() => {
-                  this.$notify({
-                      type: 'info',
-                      message: '已取消删除'
-                  })     
+      del(id) {
+          let data={
+              "id":id,
+          }
+          this.$axios.post(this.$http.api.taskDel,data).then(res=>{
+              if(res.code===200){
+                  this.$message.success(res.msg)
+              }else {
+                  this.$message.error(res.msg)
+              }
+          }).catch(err=>{
+              console.log(err)
           })
       },
       delUser(row) {
@@ -192,16 +199,9 @@ export default {
               row.delLoading = false
           })
       },
-      // 修改
-      edit(row) {
-          this.isAdd = false
-          this.$refs.userForm.title = '修改权限'
-          this.$refs.userForm.role_id = row.id
-          this.$refs.userForm.form.role_name = row.role_name
-          this.$refs.userForm.form.permissions = row.permissions.map(permission => permission.id)
-          this.getPermissionDict()
-          document.querySelector('.mask').style.display = 'block'
-          this.$refs.userForm.visible = true
+      // 详情
+      taskInfo(val) {
+          this.$router.push({ path: 'menuTaskInfo', query: { row: val } });
       },
       // 获取权限字典
       getPermissionDict() {
@@ -241,6 +241,110 @@ export default {
 </script>
 
 <style lang='less' scoped="scoped">
+    .popup{
+        z-index: 997;
+        width: 40%;
+        height: 70%;
+        position: absolute; /* 绝对定位 */
+        top: 50%; /* 向下偏移50% */
+        left: 50%; /* 向右偏移50% */
+        transform: translate(-50%, -50%); /* 回移50% */
+        background-image:url('../../img/tjpz.svg');
+        background-repeat: no-repeat; /* 可选，防止图像重复 */
+        background-size: 100% 100%; /* 宽度为100%，高度自适应保持宽高比 */
+        .tag{
+            margin-left: 9%;
+            .tags{
+                margin-right: 5%;
+                margin-top: 2%;
+                font-size: 23px;
+                border: none;
+                background-color: transparent !important;
+                color: #565e6e;
+            }
+        }
+        .jbpz{
+            margin-top: 10%;
+            margin-left: 23%;
+            height: 100%;
+            position:relative;
+            .project{
+                display: inline-block;
+                width: 100%;
+                margin-top: 3%;
+                text-align: center;
+                padding-right: 10%;
+
+            }
+            .tar{
+                display: flex;
+                margin-left: 23%;
+                width: 100%;
+                text-align: center;
+                ::v-deep .el-upload-list {
+                    margin: 0;
+                    list-style: none;
+                    width: 300px !important;
+                    padding-left: 20%;
+                }
+                .uploadBgImg{
+                    margin-top: 5%;
+                    width: 300px;
+                    height: 40px;
+                    background-image: url("../../img/shangchuan.png");
+                    background-repeat: no-repeat; /* 可选，防止图像重复 */
+                    background-size: 100% auto; /* 宽度为100%，高度自适应保持宽高比 */
+                    text-align: right;
+                    padding-right: 10%;
+                    padding-top: 2%;
+                    font-size:0;
+                    color: rgba(81, 84, 102, 0.84);
+                }
+                .uploadBgImg::file-selector-button{
+                    padding: 0;
+                    background-color: transparent;
+                    cursor: pointer;
+                    font-size: 0;
+                }
+            }
+            .srkType{
+                width: 100%;
+                float: left;
+                margin-top: 2%;
+                text-align: center;
+                .srk{
+                    width: 40%;
+                    margin-left: 2%;
+                    background-color: #0c295b;
+                    display: inline-block;
+                    border: none;
+                }
+            }
+            .radioType{
+                width: 100%;
+                float: left;
+                margin-top: 2%;
+                text-align: center;
+            }
+            .anType{
+                height: 10%;
+                position:absolute;
+                bottom:4%;
+                left: 50%;
+                transform: translateX(-50%);
+                .glBut{
+                    width: 90px;
+                    height: 30px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: rgba(24, 133, 234, 0.2);
+                    color: #1b7cc4;
+                }
+
+            }
+        }
+    }
 .custom-table {
   width: 100%;
   height: 100%;
@@ -280,7 +384,7 @@ export default {
 
       .list{
           width: 95%;
-          height: 84%;
+          height: 77%;
           margin-left: 2.5%;
           overflow-y: auto;
           overflow-y: scroll;
