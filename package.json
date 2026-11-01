@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@jiaminghi/data-view": "^2.10.0",
-    "axios": "^0.21.1",
+    "axios": "^1.21.0",
     "dayjs": "^1.11.10",
-    "echarts": "^5.4.1",
+    "echarts": "^6.1.0",
     "echarts-gl": "^2.0.9",
     "echarts-wordcloud": "^2.0.0",
     "el-table-infinite-scroll": "^1.0.10",
